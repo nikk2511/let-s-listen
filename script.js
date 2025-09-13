@@ -144,29 +144,39 @@ class LetsListenPlayer {
         const url = `${this.baseUrl}/audius?query=${encodeURIComponent(query)}&limit=20`;
         
         console.log('📡 API URL:', url);
+        console.log('🌐 Base URL:', window.location.origin);
+        console.log('🔍 Full URL:', window.location.origin + url);
         
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            });
+            
+            console.log('📊 Response status:', response.status);
+            console.log('📊 Response headers:', response.headers);
+        
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.details || `HTTP error! status: ${response.status}`);
             }
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.details || `HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('📊 API Response:', data);
-        
-        // Handle different response formats
-        if (Array.isArray(data)) {
+            
+            const data = await response.json();
+            console.log('📊 API Response:', data);
+            
+            // Handle different response formats
+            if (Array.isArray(data)) {
                 return data;
-        } else if (data.data && Array.isArray(data.data)) {
-            return data.data;
+            } else if (data.data && Array.isArray(data.data)) {
+                return data.data;
             } else {
-            throw new Error('Invalid response format from API');
+                throw new Error('Invalid response format from API');
+            }
+        } catch (error) {
+            console.error('❌ Search error:', error);
+            throw error;
         }
     }
 

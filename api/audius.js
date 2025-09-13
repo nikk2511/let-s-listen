@@ -1,20 +1,25 @@
 export default async function handler(req, res) {
-    // Enable CORS
+    // Set CORS headers
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-    );
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
+    // Handle preflight requests
     if (req.method === 'OPTIONS') {
         res.status(200).end();
         return;
     }
 
+    // Only allow GET requests
+    if (req.method !== 'GET') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
     try {
         const { query, limit = 10, artistId } = req.query;
+        
+        console.log('🔍 API Request:', { query, limit, artistId, method: req.method });
         
         let audiusUrl;
         let logMessage;
@@ -28,22 +33,30 @@ export default async function handler(req, res) {
             audiusUrl = `https://discoveryprovider.audius.co/v1/tracks/search?query=${encodeURIComponent(query)}&limit=${limit}`;
             logMessage = `🔍 Searching Audius for: "${query}"`;
         } else {
-            return res.status(400).json({ error: 'Missing query parameter or artist ID' });
+            return res.status(400).json({ 
+                error: 'Missing required parameters',
+                details: 'Please provide either "query" for search or "artistId" for artist details'
+            });
         }
         
         console.log(logMessage);
-        console.log(`📡 API URL: ${audiusUrl}`);
+        console.log(`📡 Audius API URL: ${audiusUrl}`);
         
         // Fetch from Audius API
         const response = await fetch(audiusUrl, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'User-Agent': 'Audius-Music-Search/1.0.0'
+                'User-Agent': 'Lets-Listen/1.0.0',
+                'Content-Type': 'application/json'
             }
         });
 
+        console.log(`📊 Audius API Response: ${response.status} ${response.statusText}`);
+
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`❌ Audius API Error: ${response.status} - ${errorText}`);
             throw new Error(`Audius API error: ${response.status} ${response.statusText}`);
         }
 
@@ -55,13 +68,17 @@ export default async function handler(req, res) {
             console.log(`✅ Found ${data.data ? data.data.length : 0} tracks`);
         }
         
-        res.json(data);
+        // Return the data
+        res.status(200).json(data);
         
     } catch (error) {
         console.error('❌ API Error:', error.message);
+        console.error('❌ Error stack:', error.stack);
+        
         res.status(500).json({ 
             error: 'Failed to fetch data from Audius API',
-            details: error.message 
+            details: error.message,
+            timestamp: new Date().toISOString()
         });
     }
 }
