@@ -254,8 +254,8 @@
                 <div id="loadingState" class="state-message hidden">
                     <div class="loading-spinner"></div>
                     <p>Searching for music...</p>
-                </div>
-
+        </div>
+        
                 <div id="errorState" class="state-message hidden">
                     <div class="error-icon">
                         <i class="fas fa-exclamation-triangle"></i>
@@ -323,7 +323,8 @@
                     this.displayTracks(tracks);
                 } catch (error) {
                     console.error('❌ Search error:', error);
-                    this.showError('Failed to search for tracks. Please try again.');
+                    console.log('🔄 Falling back to demo data...');
+                    this.showDemoResults(query);
                 }
             }
             
@@ -345,7 +346,14 @@
                     console.log('📊 Response status:', response.status);
                     
                     if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
+                        const errorText = await response.text();
+                        console.error('❌ API Error Response:', errorText);
+                        let errorData = {};
+                        try {
+                            errorData = JSON.parse(errorText);
+                        } catch (e) {
+                            console.error('❌ Could not parse error response as JSON');
+                        }
                         throw new Error(errorData.details || `HTTP error! status: ${response.status}`);
                     }
                     
@@ -412,6 +420,54 @@
             showStreamingInfo(track) {
                 // Create a simple alert for now
                 alert(`Track: ${track.title}\nArtist: ${track.user.name}\nDuration: ${this.formatDuration(track.duration)}\n\nThis track is available on Audius!`);
+            }
+            
+            showDemoResults(query) {
+                console.log('🎭 Showing demo results for:', query);
+                this.hideAllStates();
+                
+                const demoTracks = [
+                    {
+                        title: `Demo Track 1 - ${query}`,
+                        user: { name: "Demo Artist 1" },
+                        duration: 180,
+                        artwork: null,
+                        is_streamable: false
+                    },
+                    {
+                        title: `Demo Track 2 - ${query}`, 
+                        user: { name: "Demo Artist 2" },
+                        duration: 240,
+                        artwork: null,
+                        is_streamable: false
+                    },
+                    {
+                        title: `Demo Track 3 - ${query}`,
+                        user: { name: "Demo Artist 3" },
+                        duration: 200,
+                        artwork: null,
+                        is_streamable: false
+                    }
+                ];
+                
+                this.displayTracks(demoTracks);
+                
+                // Show a notice that this is demo data
+                const notice = document.createElement('div');
+                notice.style.cssText = `
+                    background: #fff3cd;
+                    border: 1px solid #ffeaa7;
+                    color: #856404;
+                    padding: 1rem;
+                    border-radius: 10px;
+                    margin-bottom: 1rem;
+                    text-align: center;
+                `;
+                notice.innerHTML = `
+                    <strong>⚠️ Demo Mode:</strong> API is not responding. Showing demo results. 
+                    <br>Try refreshing the page or check the console for errors.
+                `;
+                this.tracksContainer.parentNode.insertBefore(notice, this.tracksContainer);
             }
             
             showLoading() {
