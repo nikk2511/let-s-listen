@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🎵 Let's Listen</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -207,17 +207,244 @@
             background: #5a6fd8;
         }
 
+        /* Mobile Responsive Styles */
         @media (max-width: 768px) {
             .app-title {
                 font-size: 2rem;
+            }
+            
+            .app-subtitle {
+                font-size: 1rem;
+            }
+            
+            .header {
+                padding: 1.5rem 0;
+            }
+            
+            .header-content {
+                padding: 0 1rem;
             }
             
             .main-content {
                 padding: 1rem;
             }
             
+            .search-box {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.75rem;
+            }
+            
+            .search-input {
+                padding: 0.75rem 1rem;
+                font-size: 1rem;
+                border-radius: 25px;
+            }
+            
+            .search-btn {
+                padding: 0.75rem 1.5rem;
+                border-radius: 25px;
+                font-size: 1rem;
+            }
+            
             .tracks-container {
                 grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .track-item {
+                padding: 1rem;
+            }
+            
+            .track-artwork {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            
+            .track-title {
+                font-size: 1rem;
+            }
+            
+            .track-artist {
+                font-size: 0.9rem;
+            }
+            
+            .track-duration {
+                font-size: 0.8rem;
+            }
+            
+            .state-message {
+                padding: 2rem 1rem;
+            }
+            
+            .loading-spinner {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .error-icon, .no-results-icon {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .app-title {
+                font-size: 1.5rem;
+            }
+            
+            .app-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .header {
+                padding: 1rem 0;
+            }
+            
+            .main-content {
+                padding: 0.5rem;
+            }
+            
+            .search-box {
+                padding: 0.5rem;
+            }
+            
+            .search-input {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
+            
+            .search-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .track-item {
+                padding: 0.75rem;
+            }
+            
+            .track-artwork {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .track-title {
+                font-size: 0.9rem;
+            }
+            
+            .track-artist {
+                font-size: 0.8rem;
+            }
+            
+            .track-duration {
+                font-size: 0.7rem;
+            }
+            
+            .state-message {
+                padding: 1.5rem 0.75rem;
+            }
+            
+            .loading-spinner {
+                width: 25px;
+                height: 25px;
+            }
+            
+            .error-icon, .no-results-icon {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Modal Responsive Styles */
+        @media (max-width: 768px) {
+            .modal-content {
+                max-width: 90%;
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .modal-title {
+                font-size: 1.2rem;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .modal-btn {
+                width: 100%;
+                padding: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .modal-content {
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+            
+            .modal-title {
+                font-size: 1rem;
+            }
+            
+            .modal-buttons {
+                gap: 0.25rem;
+            }
+            
+            .modal-btn {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Audio Player Responsive */
+        @media (max-width: 768px) {
+            #audioPlayer {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+                padding: 0.75rem;
+            }
+            
+            .test-audio {
+                top: 10px;
+                right: 10px;
+                padding: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #audioPlayer {
+                left: 5px;
+                right: 5px;
+                bottom: 5px;
+                padding: 0.5rem;
+            }
+            
+            .test-audio {
+                top: 5px;
+                right: 5px;
+                padding: 0.5rem;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .track-item {
+                min-height: 80px;
+            }
+            
+            .search-btn, .modal-btn, .retry-btn {
+                min-height: 44px;
+            }
+            
+            .track-item:active {
+                transform: scale(0.98);
+            }
+            
+            .search-btn:active, .modal-btn:active, .retry-btn:active {
+                transform: scale(0.95);
             }
         }
     </style>
@@ -447,6 +674,8 @@
                         width: 90%;
                         text-align: center;
                         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                        max-height: 90vh;
+                        overflow-y: auto;
                     ">
                         <div style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;">
                             <i class="fas fa-music"></i>
@@ -455,7 +684,7 @@
                         <p style="color: #666; margin-bottom: 1rem;">by ${this.escapeHtml(track.user.name)}</p>
                         <p style="color: #999; margin-bottom: 2rem;">Duration: ${this.formatDuration(track.duration)}</p>
                         
-                        <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
+                        <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
                             <button onclick="app.playTrackFromModal('${JSON.stringify(track).replace(/"/g, '&quot;')}')" style="
                                 background: #667eea;
                                 color: white;
@@ -464,6 +693,9 @@
                                 border-radius: 25px;
                                 cursor: pointer;
                                 font-size: 1rem;
+                                min-width: 120px;
+                                flex: 1;
+                                max-width: 200px;
                             ">
                                 <i class="fas fa-play"></i> Play
                             </button>
@@ -474,6 +706,10 @@
                                 padding: 0.75rem 1.5rem;
                                 border-radius: 25px;
                                 font-size: 1rem;
+                                min-width: 120px;
+                                flex: 1;
+                                max-width: 200px;
+                                display: inline-block;
                             ">
                                 <i class="fas fa-external-link-alt"></i> Open on Audius
                             </a>
