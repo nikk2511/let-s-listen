@@ -7,19 +7,5 @@
     "api/audius/artist/[id].js": {
       "maxDuration": 10
     }
-  },
-  "routes": [
-    {
-      "src": "/api/audius/search",
-      "dest": "/api/audius/search.js"
-    },
-    {
-      "src": "/api/audius/artist/(.*)",
-      "dest": "/api/audius/artist/[id].js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ]
+  }
 }
