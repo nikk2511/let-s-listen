@@ -418,8 +418,195 @@
             }
             
             showStreamingInfo(track) {
-                // Create a simple alert for now
-                alert(`Track: ${track.title}\nArtist: ${track.user.name}\nDuration: ${this.formatDuration(track.duration)}\n\nThis track is available on Audius!`);
+                // Show track details and try to play
+                this.showTrackModal(track);
+            }
+            
+            showTrackModal(track) {
+                // Create modal for track details
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="
+                        background: white;
+                        border-radius: 15px;
+                        padding: 2rem;
+                        max-width: 500px;
+                        width: 90%;
+                        text-align: center;
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                    ">
+                        <div style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <h3 style="margin-bottom: 1rem; color: #333;">${this.escapeHtml(track.title)}</h3>
+                        <p style="color: #666; margin-bottom: 1rem;">by ${this.escapeHtml(track.user.name)}</p>
+                        <p style="color: #999; margin-bottom: 2rem;">Duration: ${this.formatDuration(track.duration)}</p>
+                        
+                        <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
+                            <button onclick="this.playTrack('${track.track_cid || 'demo'}')" style="
+                                background: #667eea;
+                                color: white;
+                                border: none;
+                                padding: 0.75rem 1.5rem;
+                                border-radius: 25px;
+                                cursor: pointer;
+                                font-size: 1rem;
+                            ">
+                                <i class="fas fa-play"></i> Play
+                            </button>
+                            <a href="https://audius.co${track.permalink}" target="_blank" style="
+                                background: #28a745;
+                                color: white;
+                                text-decoration: none;
+                                padding: 0.75rem 1.5rem;
+                                border-radius: 25px;
+                                font-size: 1rem;
+                            ">
+                                <i class="fas fa-external-link-alt"></i> Open on Audius
+                            </a>
+                        </div>
+                        
+                        <button onclick="this.closeModal()" style="
+                            background: #6c757d;
+                            color: white;
+                            border: none;
+                            padding: 0.5rem 1rem;
+                            border-radius: 20px;
+                            cursor: pointer;
+                        ">
+                            Close
+                        </button>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Add close functionality
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        this.closeModal();
+                    }
+                });
+                
+                // Store modal reference
+                this.currentModal = modal;
+            }
+            
+            closeModal() {
+                if (this.currentModal) {
+                    this.currentModal.remove();
+                    this.currentModal = null;
+                }
+            }
+            
+            playTrack(trackId) {
+                console.log('🎵 Attempting to play track:', trackId);
+                
+                // Try to play the track
+                this.attemptAudioPlayback(trackId);
+            }
+            
+            async attemptAudioPlayback(trackId) {
+                try {
+                    // For demo tracks, use a sample audio
+                    if (trackId === 'demo') {
+                        this.playDemoAudio();
+                        return;
+                    }
+                    
+                    // For real tracks, try to construct audio URL
+                    const audioUrl = await this.getAudioUrl(trackId);
+                    if (audioUrl) {
+                        this.playAudio(audioUrl);
+                    } else {
+                        this.showAudioError();
+                    }
+                } catch (error) {
+                    console.error('❌ Audio playback error:', error);
+                    this.showAudioError();
+                }
+            }
+            
+            playDemoAudio() {
+                // Create a simple audio player for demo
+                const audioPlayer = document.createElement('div');
+                audioPlayer.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    left: 20px;
+                    right: 20px;
+                    background: white;
+                    border-radius: 15px;
+                    padding: 1rem;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                    z-index: 1001;
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                `;
+                
+                audioPlayer.innerHTML = `
+                    <div style="font-size: 2rem; color: #667eea;">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600; color: #333;">Demo Track Playing</div>
+                        <div style="color: #666; font-size: 0.9rem;">This is a demo - no actual audio</div>
+                    </div>
+                    <button onclick="this.stopDemoAudio()" style="
+                        background: #dc3545;
+                        color: white;
+                        border: none;
+                        padding: 0.5rem 1rem;
+                        border-radius: 20px;
+                        cursor: pointer;
+                    ">
+                        <i class="fas fa-stop"></i> Stop
+                    </button>
+                `;
+                
+                document.body.appendChild(audioPlayer);
+                this.demoPlayer = audioPlayer;
+                
+                // Auto-close after 5 seconds
+                setTimeout(() => {
+                    this.stopDemoAudio();
+                }, 5000);
+            }
+            
+            stopDemoAudio() {
+                if (this.demoPlayer) {
+                    this.demoPlayer.remove();
+                    this.demoPlayer = null;
+                }
+            }
+            
+            async getAudioUrl(trackId) {
+                // This would need to be implemented to get actual audio URLs from Audius
+                // For now, return null to show the error message
+                return null;
+            }
+            
+            playAudio(audioUrl) {
+                // This would play the actual audio
+                console.log('🎵 Playing audio from:', audioUrl);
+            }
+            
+            showAudioError() {
+                alert('🎵 Audio Not Available\n\nThis track cannot be played directly in the app.\n\nClick "Open on Audius" to play it on their platform where it will work properly!');
             }
             
             showDemoResults(query) {
