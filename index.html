@@ -538,17 +538,57 @@
                         return;
                     }
                     
+                    // Test with a known working audio URL first
+                    console.log('🧪 Testing with sample audio URL...');
+                    const testUrl = 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
+                    this.playTestAudio(testUrl);
+                    
                     // For real tracks, try to get audio URL
                     const audioUrl = await this.getAudioUrlFromTrack(track);
                     if (audioUrl) {
+                        console.log('🎵 Found Audius audio URL, trying to play...');
                         this.playAudio(audioUrl);
                     } else {
+                        console.log('❌ No Audius audio URL found');
                         this.showAudioError();
                     }
                 } catch (error) {
                     console.error('❌ Audio playback error:', error);
                     this.showAudioError();
                 }
+            }
+            
+            playTestAudio(testUrl) {
+                console.log('🧪 Testing audio player with sample URL:', testUrl);
+                const testAudio = document.createElement('audio');
+                testAudio.src = testUrl;
+                testAudio.controls = true;
+                testAudio.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 1003;
+                    background: white;
+                    padding: 1rem;
+                    border-radius: 10px;
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                `;
+                document.body.appendChild(testAudio);
+                
+                testAudio.addEventListener('error', (e) => {
+                    console.error('❌ Test audio failed:', e);
+                });
+                
+                testAudio.addEventListener('canplay', () => {
+                    console.log('✅ Test audio can play - audio player works!');
+                });
+                
+                // Auto-remove after 10 seconds
+                setTimeout(() => {
+                    if (testAudio.parentNode) {
+                        testAudio.parentNode.removeChild(testAudio);
+                    }
+                }, 10000);
             }
             
             async getAudioUrlFromTrack(track) {
@@ -719,6 +759,8 @@
             
             playAudio(audioUrl) {
                 console.log('🎵 Playing audio from:', audioUrl);
+                console.log('🔍 Audio URL type:', typeof audioUrl);
+                console.log('🔍 Audio URL length:', audioUrl ? audioUrl.length : 'null');
                 
                 // Create or get audio element
                 let audio = document.getElementById('audioPlayer');
@@ -726,6 +768,7 @@
                     audio = document.createElement('audio');
                     audio.id = 'audioPlayer';
                     audio.controls = true;
+                    audio.preload = 'metadata';
                     audio.style.cssText = `
                         position: fixed;
                         bottom: 20px;
@@ -736,19 +779,44 @@
                         border-radius: 15px;
                         padding: 1rem;
                         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                        display: none;
                     `;
                     document.body.appendChild(audio);
                 }
+                
+                // Add event listeners for debugging
+                audio.addEventListener('loadstart', () => {
+                    console.log('🔄 Audio load started');
+                });
+                
+                audio.addEventListener('loadedmetadata', () => {
+                    console.log('✅ Audio metadata loaded');
+                    console.log('📊 Audio duration:', audio.duration);
+                });
+                
+                audio.addEventListener('canplay', () => {
+                    console.log('✅ Audio can play');
+                });
+                
+                audio.addEventListener('error', (e) => {
+                    console.error('❌ Audio error event:', e);
+                    console.error('❌ Audio error details:', audio.error);
+                });
                 
                 // Set audio source and play
                 audio.src = audioUrl;
                 audio.load();
                 
+                // Show the player first
+                audio.style.display = 'block';
+                
                 audio.play().then(() => {
-                    console.log('✅ Audio started playing');
+                    console.log('✅ Audio started playing successfully');
                     this.showAudioPlayer(audio);
                 }).catch(error => {
                     console.error('❌ Audio play failed:', error);
+                    console.error('❌ Error name:', error.name);
+                    console.error('❌ Error message:', error.message);
                     this.showAudioError();
                 });
             }
@@ -766,7 +834,66 @@
             }
             
             showAudioError() {
-                alert('🎵 Audio Not Available\n\nThis track cannot be played directly in the app.\n\nClick "Open on Audius" to play it on their platform where it will work properly!');
+                // Create a better error modal instead of alert
+                const errorModal = document.createElement('div');
+                errorModal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1002;
+                `;
+                
+                errorModal.innerHTML = `
+                    <div style="
+                        background: white;
+                        border-radius: 15px;
+                        padding: 2rem;
+                        max-width: 400px;
+                        width: 90%;
+                        text-align: center;
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                    ">
+                        <div style="font-size: 3rem; color: #e74c3c; margin-bottom: 1rem;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3 style="margin-bottom: 1rem; color: #333;">Audio Not Available</h3>
+                        <p style="color: #666; margin-bottom: 2rem;">
+                            This track cannot be played directly in the app due to streaming restrictions.
+                        </p>
+                        <div style="display: flex; gap: 1rem; justify-content: center;">
+                            <button onclick="this.closeErrorModal()" style="
+                                background: #6c757d;
+                                color: white;
+                                border: none;
+                                padding: 0.75rem 1.5rem;
+                                border-radius: 25px;
+                                cursor: pointer;
+                            ">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(errorModal);
+                
+                // Add close functionality
+                errorModal.addEventListener('click', (e) => {
+                    if (e.target === errorModal) {
+                        errorModal.remove();
+                    }
+                });
+                
+                // Store reference for close button
+                window.closeErrorModal = () => {
+                    errorModal.remove();
+                };
             }
             
             showDemoResults(query) {
