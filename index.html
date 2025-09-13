@@ -329,7 +329,7 @@
             }
             
             async searchTracks(query) {
-                const url = `/api?query=${encodeURIComponent(query)}&limit=20`;
+                const url = `/api/search?query=${encodeURIComponent(query)}&limit=20`;
                 
                 console.log('📡 API URL:', url);
                 console.log('🌐 Base URL:', window.location.origin);

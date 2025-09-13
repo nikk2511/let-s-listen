@@ -3,6 +3,12 @@
   "functions": {
     "api/index.js": {
       "maxDuration": 10
+    },
+    "api/hello.js": {
+      "maxDuration": 5
+    },
+    "api/search.js": {
+      "maxDuration": 10
     }
   }
 }
