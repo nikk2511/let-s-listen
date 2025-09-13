@@ -456,7 +456,7 @@
                         <p style="color: #999; margin-bottom: 2rem;">Duration: ${this.formatDuration(track.duration)}</p>
                         
                         <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
-                            <button onclick="this.playTrack('${track.track_cid || 'demo'}')" style="
+                            <button onclick="app.playTrackFromModal('${JSON.stringify(track).replace(/"/g, '&quot;')}')" style="
                                 background: #667eea;
                                 color: white;
                                 border: none;
@@ -517,6 +517,79 @@
                 
                 // Try to play the track
                 this.attemptAudioPlayback(trackId);
+            }
+            
+            playTrackFromModal(trackJson) {
+                try {
+                    const track = JSON.parse(trackJson);
+                    console.log('🎵 Playing track from modal:', track.title);
+                    this.attemptAudioPlaybackWithTrack(track);
+                } catch (error) {
+                    console.error('❌ Error parsing track data:', error);
+                    this.showAudioError();
+                }
+            }
+            
+            async attemptAudioPlaybackWithTrack(track) {
+                try {
+                    // For demo tracks, use a sample audio
+                    if (track.title && track.title.includes('Demo Track')) {
+                        this.playDemoAudio();
+                        return;
+                    }
+                    
+                    // For real tracks, try to get audio URL
+                    const audioUrl = await this.getAudioUrlFromTrack(track);
+                    if (audioUrl) {
+                        this.playAudio(audioUrl);
+                    } else {
+                        this.showAudioError();
+                    }
+                } catch (error) {
+                    console.error('❌ Audio playback error:', error);
+                    this.showAudioError();
+                }
+            }
+            
+            async getAudioUrlFromTrack(track) {
+                try {
+                    // Try different audio sources
+                    if (track.preview_url) {
+                        console.log('✅ Using preview URL:', track.preview_url);
+                        return track.preview_url;
+                    }
+                    
+                    // Try to construct streaming URL
+                    if (track.track_cid) {
+                        const cdnEndpoints = [
+                            'https://audius-creator-6.theblueprint.xyz',
+                            'https://audius-content-13.figment.io',
+                            'https://blockdaemon-audius-content-08.bdnodes.net',
+                            'https://audius-content-14.cultur3stake.com'
+                        ];
+                        
+                        for (const endpoint of cdnEndpoints) {
+                            const audioUrl = `${endpoint}/content/${track.track_cid}`;
+                            console.log('🔄 Trying CDN endpoint:', audioUrl);
+                            
+                            // Test if the URL is accessible
+                            try {
+                                const testResponse = await fetch(audioUrl, { method: 'HEAD' });
+                                if (testResponse.ok) {
+                                    console.log('✅ Found working audio URL:', audioUrl);
+                                    return audioUrl;
+                                }
+                            } catch (e) {
+                                console.log('❌ CDN endpoint failed:', endpoint);
+                            }
+                        }
+                    }
+                    
+                    throw new Error('No audio source available');
+                } catch (error) {
+                    console.error('❌ Error getting audio URL:', error);
+                    return null;
+                }
             }
             
             async attemptAudioPlayback(trackId) {
@@ -595,14 +668,101 @@
             }
             
             async getAudioUrl(trackId) {
-                // This would need to be implemented to get actual audio URLs from Audius
-                // For now, return null to show the error message
-                return null;
+                try {
+                    // Try to get the track details first
+                    const response = await fetch(`/api/search?query=${encodeURIComponent(trackId)}&limit=1`);
+                    if (!response.ok) throw new Error('Failed to fetch track details');
+                    
+                    const data = await response.json();
+                    const track = data.data && data.data[0];
+                    
+                    if (!track) throw new Error('Track not found');
+                    
+                    // Try different audio sources
+                    if (track.preview_url) {
+                        console.log('✅ Using preview URL:', track.preview_url);
+                        return track.preview_url;
+                    }
+                    
+                    // Try to construct streaming URL
+                    if (track.track_cid) {
+                        const cdnEndpoints = [
+                            'https://audius-creator-6.theblueprint.xyz',
+                            'https://audius-content-13.figment.io',
+                            'https://blockdaemon-audius-content-08.bdnodes.net',
+                            'https://audius-content-14.cultur3stake.com'
+                        ];
+                        
+                        for (const endpoint of cdnEndpoints) {
+                            const audioUrl = `${endpoint}/content/${track.track_cid}`;
+                            console.log('🔄 Trying CDN endpoint:', audioUrl);
+                            
+                            // Test if the URL is accessible
+                            try {
+                                const testResponse = await fetch(audioUrl, { method: 'HEAD' });
+                                if (testResponse.ok) {
+                                    console.log('✅ Found working audio URL:', audioUrl);
+                                    return audioUrl;
+                                }
+                            } catch (e) {
+                                console.log('❌ CDN endpoint failed:', endpoint);
+                            }
+                        }
+                    }
+                    
+                    throw new Error('No audio source available');
+                } catch (error) {
+                    console.error('❌ Error getting audio URL:', error);
+                    return null;
+                }
             }
             
             playAudio(audioUrl) {
-                // This would play the actual audio
                 console.log('🎵 Playing audio from:', audioUrl);
+                
+                // Create or get audio element
+                let audio = document.getElementById('audioPlayer');
+                if (!audio) {
+                    audio = document.createElement('audio');
+                    audio.id = 'audioPlayer';
+                    audio.controls = true;
+                    audio.style.cssText = `
+                        position: fixed;
+                        bottom: 20px;
+                        left: 20px;
+                        right: 20px;
+                        z-index: 1001;
+                        background: white;
+                        border-radius: 15px;
+                        padding: 1rem;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                    `;
+                    document.body.appendChild(audio);
+                }
+                
+                // Set audio source and play
+                audio.src = audioUrl;
+                audio.load();
+                
+                audio.play().then(() => {
+                    console.log('✅ Audio started playing');
+                    this.showAudioPlayer(audio);
+                }).catch(error => {
+                    console.error('❌ Audio play failed:', error);
+                    this.showAudioError();
+                });
+            }
+            
+            showAudioPlayer(audio) {
+                // Show the audio player
+                audio.style.display = 'block';
+                
+                // Auto-hide after 10 seconds if no interaction
+                setTimeout(() => {
+                    if (audio.paused) {
+                        audio.style.display = 'none';
+                    }
+                }, 10000);
             }
             
             showAudioError() {
