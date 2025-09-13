@@ -4,9 +4,223 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎵 Let's Listen</title>
-    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Inline CSS to ensure it loads */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .app-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .search-section {
+            margin-bottom: 3rem;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-box {
+            display: flex;
+            background: white;
+            border-radius: 50px;
+            padding: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            background: transparent;
+        }
+
+        .search-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .tracks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .track-item {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .track-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .track-artwork {
+            width: 60px;
+            height: 60px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: #666;
+        }
+
+        .track-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .track-artist {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .track-duration {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .state-message {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-icon, .no-results-icon {
+            font-size: 3rem;
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+
+        .retry-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+
+        .retry-btn:hover {
+            background: #5a6fd8;
+        }
+
+        @media (max-width: 768px) {
+            .app-title {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .tracks-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -20,172 +234,239 @@
                 <p class="app-subtitle">Discover and play music from independent artists</p>
             </div>
         </header>
-
-        <!-- Search Section -->
-        <section class="search-section">
-            <div class="search-container">
-                <div class="search-box">
-                    <i class="fas fa-search search-icon"></i>
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        placeholder="Search for songs, artists, or albums..."
-                        autocomplete="off"
-                    >
-                    <button id="searchBtn" class="search-btn">
-                        <i class="fas fa-search"></i>
-                        Search
-                    </button>
-                </div>
-            </div>
-        </section>
-
+        
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Loading State -->
-            <div id="loadingState" class="state-container hidden">
-                <div class="loading-spinner">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-                <p>Searching for music...</p>
+            <!-- Search Section -->
+            <section class="search-section">
+            <div class="search-container">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search for songs, artists, or albums..." class="search-input">
+                        <button id="searchBtn" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
             </div>
-
-            <!-- Error State -->
-            <div id="errorState" class="state-container hidden">
-                <div class="error-icon">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <h3>Oops! Something went wrong</h3>
-                <p id="errorMessage">Please try again later.</p>
-                <button id="retryBtn" class="retry-btn">
-                    <i class="fas fa-redo"></i>
-                    Try Again
-                </button>
-            </div>
-
-            <!-- No Results State -->
-            <div id="noResultsState" class="state-container hidden">
-                <div class="no-results-icon">
-                    <i class="fas fa-music"></i>
-                </div>
-                <h3>No tracks found</h3>
-                <p>Try searching with different keywords or check your spelling.</p>
-            </div>
+        </div>
+            </section>
 
             <!-- Results Section -->
-            <div id="resultsSection" class="results-section hidden">
-                <div class="results-header">
-                    <h2>Search Results</h2>
-                    <span id="resultsCount" class="results-count">0 tracks found</span>
+            <section class="results-section">
+                <div id="loadingState" class="state-message hidden">
+                    <div class="loading-spinner"></div>
+                    <p>Searching for music...</p>
                 </div>
-                <div id="tracksList" class="tracks-list"></div>
-            </div>
-        </main>
 
-        <!-- Audio Player -->
-        <div id="audioPlayer" class="audio-player hidden">
-            <div class="player-content">
-                <div class="track-info">
-                    <div class="track-artwork">
-                        <img id="playerArtwork" src="" alt="Track artwork">
-                        <div class="artwork-placeholder">
-                            <i class="fas fa-music"></i>
-                        </div>
+                <div id="errorState" class="state-message hidden">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
                     </div>
-                    <div class="track-details">
-                        <h3 id="playerTitle">Track Title</h3>
-                        <p id="playerArtist">Artist Name</p>
-                    </div>
-                </div>
-                
-                <div class="player-controls">
-                    <button id="prevBtn" class="control-btn" title="Previous">
-                        <i class="fas fa-step-backward"></i>
-                    </button>
-                    <button id="playPauseBtn" class="play-pause-btn" title="Play/Pause">
-                        <i class="fas fa-play"></i>
-                    </button>
-                    <button id="nextBtn" class="control-btn" title="Next">
-                        <i class="fas fa-step-forward"></i>
-                    </button>
-                </div>
-
-                <div class="progress-section">
-                    <span id="currentTime" class="time">0:00</span>
-                    <div class="progress-bar">
-                        <div id="progress" class="progress"></div>
-                        <input id="progressSlider" type="range" min="0" max="100" value="0" class="progress-slider">
-                    </div>
-                    <span id="duration" class="time">0:00</span>
-                </div>
-
-                <div class="volume-section">
-                    <i class="fas fa-volume-up volume-icon"></i>
-                    <input id="volumeSlider" type="range" min="0" max="100" value="50" class="volume-slider">
-                </div>
-
-                <button id="closePlayer" class="close-player" title="Close Player">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+                    <h3>Oops! Something went wrong</h3>
+                    <p id="errorMessage">Failed to search for tracks. Please try again.</p>
+                    <button onclick="app.retrySearch()" class="retry-btn">Try Again</button>
         </div>
-
-        <!-- Track Detail Modal -->
-        <div id="trackModal" class="modal hidden">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Track Details</h3>
-                    <button id="closeModal" class="close-btn">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="modalContent"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Artist Detail Modal -->
-        <div id="artistModal" class="modal hidden">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Artist Details</h3>
-                    <button id="closeArtistModal" class="close-btn">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="artistModalContent"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Hidden Audio Element -->
-    <audio id="audioElement" preload="none"></audio>
-
-    <script>
-        // Debug script to test if JavaScript is loading
-        console.log('🎵 HTML loaded, testing JavaScript...');
         
-        // Test if we can access the DOM
-        const testElement = document.querySelector('.app-title');
-        if (testElement) {
-            console.log('✅ DOM elements found:', testElement.textContent);
-        } else {
-            console.log('❌ DOM elements not found');
+                <div id="noResultsState" class="state-message hidden">
+                    <div class="no-results-icon">
+                        <i class="fas fa-music"></i>
+            </div>
+                    <h3>No tracks found</h3>
+                    <p>Try searching for different keywords or check your spelling.</p>
+        </div>
+
+                <div id="tracksContainer" class="tracks-container hidden"></div>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        // Inline JavaScript to ensure it loads
+        console.log('🎵 Let\'s Listen - Inline Version Loading...');
+        
+        class LetsListenPlayer {
+            constructor() {
+                this.currentTracks = [];
+                this.currentTrackIndex = 0;
+                this.isPlaying = false;
+                
+                this.init();
+            }
+            
+            init() {
+                console.log('🚀 Initializing Let\'s Listen...');
+                
+                // Get elements
+                this.searchInput = document.getElementById('searchInput');
+                this.searchBtn = document.getElementById('searchBtn');
+                this.tracksContainer = document.getElementById('tracksContainer');
+                this.loadingState = document.getElementById('loadingState');
+                this.errorState = document.getElementById('errorState');
+                this.noResultsState = document.getElementById('noResultsState');
+                
+                // Add event listeners
+                this.searchBtn.addEventListener('click', () => this.handleSearch());
+                this.searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.handleSearch();
+                });
+                
+                console.log('✅ Let\'s Listen initialized successfully!');
+            }
+            
+            async handleSearch() {
+                const query = this.searchInput.value.trim();
+                if (!query) return;
+                
+                console.log('🔍 Searching for:', query);
+                this.showLoading();
+                
+                try {
+                    const tracks = await this.searchTracks(query);
+                    this.displayTracks(tracks);
+                } catch (error) {
+                    console.error('❌ Search error:', error);
+                    this.showError('Failed to search for tracks. Please try again.');
+                }
+            }
+            
+            async searchTracks(query) {
+                const url = `/api?query=${encodeURIComponent(query)}&limit=20`;
+                
+                console.log('📡 API URL:', url);
+                console.log('🌐 Base URL:', window.location.origin);
+                console.log('🔍 Full URL:', window.location.origin + url);
+                
+                try {
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                        }
+                    });
+                    
+                    console.log('📊 Response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.details || `HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log('📊 API Response:', data);
+                    
+                    // Handle different response formats
+                    if (Array.isArray(data)) {
+                        return data;
+                    } else if (data.data && Array.isArray(data.data)) {
+                        return data.data;
+                    } else {
+                        throw new Error('Invalid response format from API');
+                    }
+                } catch (error) {
+                    console.error('❌ Search error:', error);
+                    throw error;
+                }
+            }
+            
+            displayTracks(tracks) {
+                console.log('🎵 Displaying tracks:', tracks.length);
+                
+                this.currentTracks = tracks;
+                this.hideAllStates();
+
+                if (tracks.length === 0) {
+                    this.showNoResults();
+                    return;
+                }
+
+                this.tracksContainer.innerHTML = '';
+                
+                tracks.forEach((track, index) => {
+                    const trackDiv = this.createTrackElement(track, index);
+                    this.tracksContainer.appendChild(trackDiv);
+                });
+                
+                this.tracksContainer.classList.remove('hidden');
+            }
+            
+            createTrackElement(track, index) {
+                const trackDiv = document.createElement('div');
+                trackDiv.className = 'track-item';
+                trackDiv.innerHTML = `
+                    <div class="track-artwork">
+                        ${track.artwork ? 
+                            `<img src="${track.artwork['150x150']}" alt="Track artwork" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">` :
+                            `<i class="fas fa-music"></i>`
+                        }
+                    </div>
+                    <div class="track-title">${this.escapeHtml(track.title)}</div>
+                    <div class="track-artist">${this.escapeHtml(track.user.name)}</div>
+                    <div class="track-duration">${this.formatDuration(track.duration)}</div>
+                `;
+                
+                trackDiv.addEventListener('click', () => {
+                    this.showStreamingInfo(track);
+                });
+                
+                return trackDiv;
+            }
+            
+            showStreamingInfo(track) {
+                // Create a simple alert for now
+                alert(`Track: ${track.title}\nArtist: ${track.user.name}\nDuration: ${this.formatDuration(track.duration)}\n\nThis track is available on Audius!`);
+            }
+            
+            showLoading() {
+                this.hideAllStates();
+                this.loadingState.classList.remove('hidden');
+            }
+            
+            showError(message) {
+                this.hideAllStates();
+                document.getElementById('errorMessage').textContent = message;
+                this.errorState.classList.remove('hidden');
+            }
+            
+            showNoResults() {
+                this.hideAllStates();
+                this.noResultsState.classList.remove('hidden');
+            }
+            
+            hideAllStates() {
+                this.loadingState.classList.add('hidden');
+                this.errorState.classList.add('hidden');
+                this.noResultsState.classList.add('hidden');
+                this.tracksContainer.classList.add('hidden');
+            }
+            
+            retrySearch() {
+                this.handleSearch();
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            formatDuration(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
         }
         
-        // Test if script.js loads
-        window.addEventListener('load', function() {
-            console.log('🌐 Page fully loaded');
-            if (typeof LetsListenPlayer !== 'undefined') {
-                console.log('✅ LetsListenPlayer class found');
-            } else {
-                console.log('❌ LetsListenPlayer class not found - script.js may not have loaded');
-            }
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 DOM Content Loaded');
+            window.app = new LetsListenPlayer();
         });
+        
+        // Also try to initialize immediately
+        if (document.readyState === 'loading') {
+            console.log('⏳ Document still loading...');
+        } else {
+            console.log('🚀 Document already loaded, initializing now...');
+            window.app = new LetsListenPlayer();
+        }
     </script>
-    <script src="script.js"></script>
 </body>
 </html>
