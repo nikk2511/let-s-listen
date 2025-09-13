@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Let's Listen</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="app-title">
+                    <i class="fas fa-music"></i>
+                    Let's Listen
+                </h1>
+                <p class="app-subtitle">Discover and play music from independent artists</p>
+            </div>
+        </header>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Search for songs, artists, or albums..."
+                        autocomplete="off"
+                    >
+                    <button id="searchBtn" class="search-btn">
+                        <i class="fas fa-search"></i>
+                        Search
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Loading State -->
+            <div id="loadingState" class="state-container hidden">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <p>Searching for music...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="state-container hidden">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3>Oops! Something went wrong</h3>
+                <p id="errorMessage">Please try again later.</p>
+                <button id="retryBtn" class="retry-btn">
+                    <i class="fas fa-redo"></i>
+                    Try Again
+                </button>
+            </div>
+
+            <!-- No Results State -->
+            <div id="noResultsState" class="state-container hidden">
+                <div class="no-results-icon">
+                    <i class="fas fa-music"></i>
+                </div>
+                <h3>No tracks found</h3>
+                <p>Try searching with different keywords or check your spelling.</p>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="results-section hidden">
+                <div class="results-header">
+                    <h2>Search Results</h2>
+                    <span id="resultsCount" class="results-count">0 tracks found</span>
+                </div>
+                <div id="tracksList" class="tracks-list"></div>
+            </div>
+        </main>
+
+        <!-- Audio Player -->
+        <div id="audioPlayer" class="audio-player hidden">
+            <div class="player-content">
+                <div class="track-info">
+                    <div class="track-artwork">
+                        <img id="playerArtwork" src="" alt="Track artwork">
+                        <div class="artwork-placeholder">
+                            <i class="fas fa-music"></i>
+                        </div>
+                    </div>
+                    <div class="track-details">
+                        <h3 id="playerTitle">Track Title</h3>
+                        <p id="playerArtist">Artist Name</p>
+                    </div>
+                </div>
+                
+                <div class="player-controls">
+                    <button id="prevBtn" class="control-btn" title="Previous">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button id="playPauseBtn" class="play-pause-btn" title="Play/Pause">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button id="nextBtn" class="control-btn" title="Next">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                </div>
+
+                <div class="progress-section">
+                    <span id="currentTime" class="time">0:00</span>
+                    <div class="progress-bar">
+                        <div id="progress" class="progress"></div>
+                        <input id="progressSlider" type="range" min="0" max="100" value="0" class="progress-slider">
+                    </div>
+                    <span id="duration" class="time">0:00</span>
+                </div>
+
+                <div class="volume-section">
+                    <i class="fas fa-volume-up volume-icon"></i>
+                    <input id="volumeSlider" type="range" min="0" max="100" value="50" class="volume-slider">
+                </div>
+
+                <button id="closePlayer" class="close-player" title="Close Player">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Track Detail Modal -->
+        <div id="trackModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Track Details</h3>
+                    <button id="closeModal" class="close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Artist Detail Modal -->
+        <div id="artistModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Artist Details</h3>
+                    <button id="closeArtistModal" class="close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="artistModalContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="audioElement" preload="none"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
