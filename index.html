@@ -653,7 +653,10 @@
             
             async handleSearch() {
                 const query = this.searchInput.value.trim();
-                if (!query) return;
+                if (!query) {
+                    console.log('🔍 Empty search query, ignoring');
+                    return;
+                }
                 
                 console.log('🔍 Searching for:', query);
                 this.showLoading();
@@ -800,7 +803,7 @@
                         <p style="color: #999; margin-bottom: 2rem;">Duration: ${this.formatDuration(track.duration)}</p>
                         
                         <div class="modal-buttons" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
-                            <button class="modal-btn" onclick="app.playTrackFromModal('${JSON.stringify(track).replace(/"/g, '&quot;')}')" style="
+                            <button class="modal-btn" onclick="app.playTrackFromModal(${JSON.stringify(track).replace(/"/g, '&quot;')})" style="
                                 background: #667eea;
                                 color: white;
                                 border: none;
@@ -830,7 +833,7 @@
                             </a>
                         </div>
                         
-                        <button onclick="this.closeModal()" style="
+                        <button onclick="app.closeModal()" style="
                             background: #6c757d;
                             color: white;
                             border: none;
@@ -857,9 +860,13 @@
             }
             
             closeModal() {
+                console.log('🔒 closeModal called');
                 if (this.currentModal) {
+                    console.log('🔒 Removing modal');
                     this.currentModal.remove();
                     this.currentModal = null;
+                } else {
+                    console.log('🔒 No modal to close');
                 }
             }
             
@@ -872,6 +879,7 @@
             
             playTrackFromModal(trackJson) {
                 try {
+                    console.log('🎵 playTrackFromModal called with:', trackJson);
                     const track = JSON.parse(trackJson);
                     console.log('🎵 Playing track from modal:', track.title);
                     this.attemptAudioPlaybackWithTrack(track);
@@ -1319,6 +1327,7 @@
             }
             
             retrySearch() {
+                console.log('🔄 Retry search clicked');
                 this.handleSearch();
             }
             
