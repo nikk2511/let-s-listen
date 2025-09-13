@@ -141,7 +141,7 @@ class LetsListenPlayer {
     }
 
     async searchTracks(query) {
-        const url = `${this.baseUrl}/audius?query=${encodeURIComponent(query)}&limit=20`;
+        const url = `${this.baseUrl}?query=${encodeURIComponent(query)}&limit=20`;
         
         console.log('📡 API URL:', url);
         console.log('🌐 Base URL:', window.location.origin);
@@ -489,7 +489,7 @@ class LetsListenPlayer {
     }
 
     async fetchArtistDetails(artistId) {
-        const url = `${this.baseUrl}/audius?artistId=${artistId}`;
+        const url = `${this.baseUrl}?artistId=${artistId}`;
         
         console.log('📡 Artist API URL:', url);
         

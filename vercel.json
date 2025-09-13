@@ -1,14 +1,8 @@
 {
   "version": 2,
   "functions": {
-    "api/audius.js": {
+    "api/index.js": {
       "maxDuration": 10
-    },
-    "api/health.js": {
-      "maxDuration": 5
-    },
-    "api/test.js": {
-      "maxDuration": 5
     }
   }
 }
