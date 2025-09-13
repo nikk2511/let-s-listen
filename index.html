@@ -164,6 +164,28 @@
     <!-- Hidden Audio Element -->
     <audio id="audioElement" preload="none"></audio>
 
+    <script>
+        // Debug script to test if JavaScript is loading
+        console.log('🎵 HTML loaded, testing JavaScript...');
+        
+        // Test if we can access the DOM
+        const testElement = document.querySelector('.app-title');
+        if (testElement) {
+            console.log('✅ DOM elements found:', testElement.textContent);
+        } else {
+            console.log('❌ DOM elements not found');
+        }
+        
+        // Test if script.js loads
+        window.addEventListener('load', function() {
+            console.log('🌐 Page fully loaded');
+            if (typeof LetsListenPlayer !== 'undefined') {
+                console.log('✅ LetsListenPlayer class found');
+            } else {
+                console.log('❌ LetsListenPlayer class not found - script.js may not have loaded');
+            }
+        });
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
