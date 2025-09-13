@@ -1,11 +1,11 @@
 {
   "version": 2,
   "functions": {
-    "api/audius/search.js": {
+    "api/audius.js": {
       "maxDuration": 10
     },
-    "api/audius/artist/[id].js": {
-      "maxDuration": 10
+    "api/test.js": {
+      "maxDuration": 5
     }
   }
 }

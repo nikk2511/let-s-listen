@@ -3,7 +3,7 @@ console.log('🎵 Let\'s Listen loading...');
 
 class LetsListenPlayer {
     constructor() {
-        this.baseUrl = '/api/audius';
+        this.baseUrl = '/api';
         this.currentTracks = [];
         this.currentTrackIndex = 0;
         this.isPlaying = false;
@@ -141,7 +141,7 @@ class LetsListenPlayer {
     }
 
     async searchTracks(query) {
-        const url = `${this.baseUrl}/search?query=${encodeURIComponent(query)}&limit=20`;
+        const url = `${this.baseUrl}/audius?query=${encodeURIComponent(query)}&limit=20`;
         
         console.log('📡 API URL:', url);
         
@@ -479,7 +479,7 @@ class LetsListenPlayer {
     }
 
     async fetchArtistDetails(artistId) {
-        const url = `${this.baseUrl}/artist/${artistId}`;
+        const url = `${this.baseUrl}/audius?artistId=${artistId}`;
         
         console.log('📡 Artist API URL:', url);
         
